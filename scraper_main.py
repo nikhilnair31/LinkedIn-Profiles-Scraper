@@ -19,25 +19,25 @@ LINKEDIN_USERNAME = str(os.getenv('LINKEDIN_USERNAME'))
 LINKEDIN_PASSWORD = str(os.getenv('LINKEDIN_PASSWORD'))
 
 # function to ensure all key data fields have a value
-def validate_field(field):
-    if field is None:
-        field = 'No results'
-    return field
+# def validate_field(field):
+#     if field is None:
+#         field = 'No results'
+#     return field
 
 driver = webdriver.Chrome('chromedriver')
-driver.get('https://www.linkedin.com')
+# driver.get('https://www.linkedin.com')
 
-username = driver.find_element(By.ID, 'session_key')
-username.send_keys(LINKEDIN_USERNAME)
-sleep(0.5)
+# username = driver.find_element(By.ID, 'session_key')
+# username.send_keys(LINKEDIN_USERNAME)
+# sleep(0.5)
 
-password = driver.find_element(By.ID, 'session_password')
-password.send_keys(LINKEDIN_PASSWORD)
-sleep(0.5)
+# password = driver.find_element(By.ID, 'session_password')
+# password.send_keys(LINKEDIN_PASSWORD)
+# sleep(0.5)
 
-sign_in_button = driver.find_element(By.XPATH, '//*[@type="submit"]')
-sign_in_button.click()
-sleep(50)
+# sign_in_button = driver.find_element(By.XPATH, '//*[@type="submit"]')
+# sign_in_button.click()
+# sleep(30)
 
 driver.get('https:www.google.com')
 sleep(3)
@@ -49,13 +49,26 @@ sleep(0.5)
 search_query.send_keys(Keys.RETURN)
 sleep(3)
 
-search_results = driver.find_elements(By.CSS_SELECTOR, "div.g")
 linkedin_urls = []
+
+search_results = driver.find_elements(By.CSS_SELECTOR, "div.g")
 for result in search_results:
     link = result.find_element(By.TAG_NAME, "a")
     href = link.get_attribute("href")
     if href.startswith("http"):
         linkedin_urls.append(href)
+
+for i in range(2, 10):  # scrape pages 2 to 4
+    next_button = driver.find_element(By.XPATH, '//a[@id="pnnext"]')
+    next_button.click()
+    sleep(2)
+
+    search_results = driver.find_elements(By.CSS_SELECTOR, "div.g")
+    for result in search_results:
+        link = result.find_element(By.TAG_NAME, "a")
+        href = link.get_attribute("href")
+        if href.startswith("http"):
+            linkedin_urls.append(href)
 
 # linkedin_urls = driver.find_elements(By.CSS_SELECTOR, ".iUh30")
 # linkedin_urls = [url.text for url in linkedin_urls]
@@ -64,54 +77,62 @@ for url in linkedin_urls:
     print(f'{url}')
 sleep(0.5)
 
-datalist = [['Name', 'Job Title', 'Company', 'College', 'Location', 'URL']]
+# datalist = [['Name', 'Job Title', 'Company', 'College', 'Location', 'URL']]
 
-# For loop to iterate over each URL in the list
-for linkedin_url in linkedin_urls:
-    driver.get(linkedin_url)
-    sleep(5)
-    sel = Selector(text=driver.page_source) 
+# # For loop to iterate over each URL in the list
+# for linkedin_url in linkedin_urls:
+    # driver.get(linkedin_url)
+    # sleep(5)
+    # sel = Selector(text=driver.page_source) 
 
-    name = ''
-    job_title = ''
-    company = ''
-    college = ''
-    location = ''
+    # name = ''
+    # job_title = ''
+    # company = ''
+    # college = ''
+    # location = ''
 
-    linkedin_url = driver.current_url
-    name_section_element = driver.find_element_by_xpath('//section[@id="ember365", "Experience")]')
-    name_element = name_section_element.find_element(By.XPATH, '//h1[@class="text-heading-xlarge inline t-24 v-align-middle break-words"]').text
-    if name_element:
-        name = name_element.strip()
-    job_title_section_element = driver.find_element_by_xpath('//section[@id="ember371", "Education")]')
-    job_title_element = driver.find_element(By.XPATH, '//div[@class="display-flex flex-wrap align-items-center full-height"]/span[contains(@class, "t-bold")]/text()').text
-    if job_title_element:
-        job_title = job_title_element.strip()
-    # company_element = driver.find_element(By.XPATH, '//div[contains(@class, "pvs-entity")]/div/a/@href').text
-    # if company_element:
-    #     company = company_element.strip()
-    # education_section_element = driver.find_element_by_xpath('//h2[contains(text(), "Education")]')
-    # college_element = education_section_element.find_element_by_xpath('..//li[@class="artdeco-list__item pvs-list__item--line-separated pvs-list__item--one-column"]//span[contains(@class, "t-bold")]').text
+    # linkedin_url = driver.current_url
+
+    # main_element = driver.find_element(By.XPATH, '//main[contains(@class, "scaffold-layout__main")]')
+
+    # name_section_element = driver.find_element(By.XPATH, '//section[contains(@class, "artdeco-card ember-view pv-top-card")]')
+    # experience_section_element = driver.find_element(By.XPATH, '//section[contains(@class, "artdeco-card ember-view pv-top-card")]')
+    # education_section_element = driver.find_element(By.XPATH, '//section[contains(@class, "artdeco-card ember-view pv-top-card")]')
+
+    # name_element = name_section_element.find_element(By.XPATH, '//h1[@class="text-heading-xlarge inline t-24 v-align-middle break-words"]').text
+    # if name_element:
+    #     name = name_element.strip()
+    # # job_title_section_element = driver.find_element(By.ID, 'ember371')
+    # # job_title_element = driver.find_element(By.XPATH, '//div[@class="display-flex flex-wrap align-items-center full-height"]/span[contains(@class, "t-bold")]/text()').text
+    # # if job_title_element:
+    # #     job_title = job_title_element.strip()
+    # # company_element = driver.find_element(By.XPATH, '//div[contains(@class, "pvs-entity")]/div/a/@href').text
+    # # if company_element:
+    # #     company = company_element.strip()
+    # education_section_element = driver.find_element(By.ID, 'ember72')
+    # latest_education_element = education_section_element.find_element(By.XPATH, "//li[1]")
+    # college_element = latest_education_element.find_element_by_xpath('span[contains(@class, "mr1 hoverable-link-text t-bold")]').text
     # if college_element:
     #     college = college_element.strip()
-    # location_element = driver.find_element(By.XPATH, '//span[contains(@class, "t-black--light") and contains(@class, "ellipsis")]/text()').text
-    # if location_element:
-    #     location = location_element.strip()
+    # # location_element = driver.find_element(By.XPATH, '//span[contains(@class, "t-black--light") and contains(@class, "ellipsis")]/text()').text
+    # # if location_element:
+    # #     location = location_element.strip()
 
-    # validating if the fields exist on the profile
-    name = validate_field(name)
-    job_title = validate_field(job_title)
-    # company = validate_field(company)
+    # # validating if the fields exist on the profile
+    # name = validate_field(name)
+    # # job_title = validate_field(job_title)
+    # # company = validate_field(company)
     # college = validate_field(college)
-    # location = validate_field(location)
-    # linkedin_url = validate_field(linkedin_url)
+    # # location = validate_field(location)
+    # # linkedin_url = validate_field(linkedin_url)
     
-    curr = [name, job_title]#, company, college, location, linkedin_url]
-    datalist.append(curr)
-    print(f'\n{curr}\n')
+    # curr = [name, college]#, company, job_title, location, linkedin_url]
+    # datalist.append(curr)
+    # print(f'\n{curr}\n')
 
-df = pd.DataFrame(datalist[1:], columns=datalist[0])
-df.to_csv(FILE_NAME, index=False)
+# df = pd.DataFrame(datalist[1:], columns=datalist[0])
+df = pd.DataFrame({'URL': linkedin_urls})
+df.to_csv(FILE_NAME, index=False, header=['URL'])
 
 # terminates the application
 driver.quit()
